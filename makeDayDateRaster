@@ -1,4 +1,5 @@
 ## Recreate raster plot used in Figure 1 of ACORN paper
+# 0) Make sure video files are in ACORN_Data folder
 # 1) Cycle through file names containing date and time of day
 # 2) Split and save date (0) and time of day (1) in array
 # 3) Make raster plot of time of day on X-axis, and date (ascending) on Y-axis
@@ -30,6 +31,7 @@ for i, name in enumerate(fileNames):
     DayDateDF['Time'][i] = np.array(  ( int(tmpTime.split('-')[0]) + ( int(tmpTime.split('-')[1])/60 ))  )
 
 # Create raster plot
+fig1, ax = plt.subplots()
 plt.scatter(DayDateDF['Time'], DayDateDF['Date'], marker='|')
 plt.gca().invert_yaxis()
 plt.xlim([0, 23])
@@ -37,3 +39,4 @@ plt.xticks([0, 4, 8, 12, 16, 20])
 plt.title('ACORN Visitation Time Across Season')
 plt.ylabel('Date')
 plt.xlabel('Time of Day')
+fig1.savefig('ACORN_visitRaster.eps', format='eps')
