@@ -1,5 +1,39 @@
 ## Recreate raster plot used in Figure 1 of ACORN paper
+# 1) Cycle through file names containing date and time of day
+# 2) Split and save date (0) and time of day (1) in array
+# 3) Make raster plot of time of day on X-axis, and date (ascending) on Y-axis
 
 # Dependencies
+import os
+import sys
+import numpy as np
+import pandas as pd
+import datetime
+import matplotlib.pyplot as plt
 
 # Set paths
+pathOrigin = os.path.normpath(os.getcwd() + os.sep)
+pathFolders = os.path.normpath( pathOrigin + '/ACORN_Data/' )
+
+# List files in declared path
+fileNames = os.listdir(pathFolders)
+fileNames.remove('.DS_Store')
+
+# Create dataframe to hold date and time of day (ToD) of visiting flies
+DayDateDF = pd.DataFrame( index=range(len(fileNames)), columns=['Date', 'Time'] )
+
+# Cycle through file names, splitting date and time of day into sub-parts
+for i, name in enumerate(fileNames):
+    tmpDate = name.split('_')[0]
+    tmpTime = name.split('_')[1]
+    DayDateDF['Date'][i] = pd.to_datetime(datetime.date( int(tmpDate.split('-')[0]), int(tmpDate.split('-')[1]), int(tmpDate.split('-')[2]) ))
+    DayDateDF['Time'][i] = np.array(  ( int(tmpTime.split('-')[0]) + ( int(tmpTime.split('-')[1])/60 ))  )
+
+# Create raster plot
+plt.scatter(DayDateDF['Time'], DayDateDF['Date'], marker='|')
+plt.gca().invert_yaxis()
+plt.xlim([0, 23])
+plt.xticks([0, 4, 8, 12, 16, 20])
+plt.title('ACORN Visitation Time Across Season')
+plt.ylabel('Date')
+plt.xlabel('Time of Day')
